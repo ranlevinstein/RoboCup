@@ -26,8 +26,8 @@
   
   public void move(float s1, float s2, float s3, float s4){//speeds for each motor.
     //motor 1 is left up motor 2 is right down motor 3 is right motor 4 is left down
-    _x += (_r/2)*(s1+s2) * cos(radians(_theta+45)) + (_r/2)*(s3+s4) * cos(radians(_theta-45));
-    _y += (_r/2)*(s1+s2) * sin(radians(_theta+45)) + (_r/2)*(s3+s4) * sin(radians(_theta-45));
+    _x += (_r/2)*(s1+s2) * cos(radians(_theta-45)) + (_r/2)*(s3+s4) * cos(radians(_theta+45));
+    _y += (_r/2)*(s1+s2) * sin(radians(_theta-45)) + (_r/2)*(s3+s4) * sin(radians(_theta+45));
     _theta += (_r/_l) * (s1-s2) + (_r/_l) * (s3-s4);
     display();
   }
