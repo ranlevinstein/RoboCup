@@ -8,27 +8,25 @@
   
   
   void draw(){
-     moveTo(mouseX, mouseY);
+     moveTo(mouseX, mouseY, mouseX%360, 0.8, 0.1);
     
   }
   
   
-  void moveTo(float x, float y){
+  void moveTo(float x, float y, float theta, float speed, float speedOfRotation){
      float m = (y-robot._y)/(x-robot._x);
-     float angle = degrees(atan(m))+45;
+     float angle = degrees(atan(m))+45-robot._theta;
      if(x-robot._x < 0){
        angle+=180;
      }
      angle = angle%360;
-     println(m);
-     moveByAngle(angle, 0.8);
+     println(robot._theta);
+     float a = cos(radians(angle)) * speed;
+     float b = sin(radians(angle)) * speed;
+     float d1 = a+(theta-robot._theta)*speedOfRotation;
+     float d2 = a-(theta-robot._theta)*speedOfRotation;
+     float d3 = b+(theta-robot._theta)*speedOfRotation;
+     float d4 = b-(theta-robot._theta)*speedOfRotation;
+     robot.move(d1, d2, d3, d4); 
   }
   
-  
-  void moveByAngle(float angle, float speed)
-  {
-    float a = cos(radians(angle)) * speed;
-    float b = sin(radians(angle)) * speed;
-    robot.move(a, a, b, b); 
-  }
-
