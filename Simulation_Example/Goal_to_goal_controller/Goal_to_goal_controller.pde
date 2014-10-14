@@ -1,6 +1,5 @@
   Robot robot;
-  float a,b;
-  
+  int i = 0;
   void setup(){
     size(500, 500);
     robot = new Robot(250, 250, 0, 30, 3);
@@ -8,8 +7,8 @@
   
   
   void draw(){
-     moveTo(mouseX, mouseY, mouseX%360, 0.8, 0.1);
-    
+     moveTo(mouseX, mouseY, i++, 0.8, 0.1);
+     
   }
   
   
