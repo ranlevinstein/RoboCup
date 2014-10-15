@@ -2,6 +2,7 @@
   public class Robot{
   FWorld _world;
   FPoly _poly;
+  
   public float _x;
   public float _y;
   public float _theta;
@@ -31,18 +32,20 @@
     rect(0, 0, 30, 100);*/
     _poly = new FPoly();
     _poly.setPosition(_x, _y);
+    _poly.setRotatable(true);
+    //_poly.setRotation(_theta);
     _poly.setStrokeWeight(3);
     _poly.setFill(120, 30, 90);
     _poly.setDensity(10);
     _poly.setRestitution(0.5);
-    _poly.vertex(-18, -31);
-    _poly.vertex(18, -31);
-    _poly.vertex(36, 0);
-    _poly.vertex(18, 31);
-    _poly.vertex(11, 21);
-    _poly.vertex(-11, 21);
-    _poly.vertex(-18, 31);
-    _poly.vertex(-36, 0); 
+    _poly.vertex(-22, -38);
+    _poly.vertex(22, -38);
+    _poly.vertex(44, 0);
+    _poly.vertex(22, 38);
+    _poly.vertex(13.5, 25.5);
+    _poly.vertex(-13.5, 25.5);
+    _poly.vertex(-22, 38);
+    _poly.vertex(-44, 0); 
     if (_poly!=null) _world.add(_poly);
     background(255);
       
@@ -63,12 +66,12 @@
     //_y += (_r/2)*(s1+s2) * sin(radians(_theta-45)) + (_r/2)*(s3+s4) * sin(radians(_theta+45));
     //_theta += (_r/_l) * (s1-s2) + (_r/_l) * (s3-s4);
     //display();
-    background(255);
+     drawField();
     _poly.setVelocity(dx, dy);
     _poly.setAngularVelocity(dTheta);
     _world.step();
     _world.draw(_obj);  
-      
+     
      if (_poly != null) {
        _poly.draw(_obj);
      }
@@ -92,6 +95,35 @@
    private void wait(float millis){
     float start = millis();
     while (millis()-start < millis){}
+  }
+  
+  public void drawField(){
+     background(58, 203, 82);
+     fill(0, 102, 153);
+     textSize(32);
+     text("RoboCup Simulator", 10, 30); 
+     
+
+     stroke(255, 255, 255);
+     
+     line(120, 120, 856, 120);
+     line(120, 120, 120, 608);
+     line(856, 608, 856, 120);
+     line(120, 608, 856, 608);
+     
+     stroke(0, 0, 0);
+     
+     line(240, 184, 240, 544);
+     line(240, 184, 120, 184);
+     line(240, 544, 120, 544);
+     
+     line(736, 184, 736, 544);
+     line(736, 184, 856, 184);
+     line(736, 544, 856, 544);
+     noFill();
+     ellipse(488, 364, 240, 240); 
+    
+    
   }
   
   
