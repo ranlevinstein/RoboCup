@@ -6,17 +6,20 @@
   public float _x;
   public float _y;
   public float _theta;
-  final float _l;
-  final float _r;
+  public final float _l;
+  public final float _r;
+  public final float _goalX;
+  public final float _goalY;
   PApplet _obj;
-  Robot(float x, float y, float theta, float l, float r, FWorld world, PApplet obj){
+  Robot(float x, float y, float theta, float l, float r, FWorld world, PApplet obj, float goalX, float goalY){
     _obj = obj;
     _world = world;
     _l = l;
     _r = r;
     _x = x;
     _y = y;
-    
+    _goalX = goalX;
+    _goalY = goalY;
     _theta = theta%360;
     display();
   }
@@ -78,13 +81,13 @@
      _x = _poly.getX();
      _y = _poly.getY();
      _theta = degrees(_poly.getRotation());
-     println(_theta);
+     //println(_theta);
      //_theta = _poly.getRotation();
   }
   
   
   public void update(float x, float y, float theta){
-    new Robot(x, y, theta, _l, _r, _world, _obj);
+    new Robot(x, y, theta, _l, _r, _world, _obj, _goalX, _goalY);
   }
   private float fixAngle(){
    if(_theta > 0) return _theta % 360; 
@@ -95,6 +98,11 @@
    private void wait(float millis){
     float start = millis();
     while (millis()-start < millis){}
+  }
+  
+  
+  public boolean holdsBall(float x, float y){
+    return sqrt((_x-x)*(_x-x)+(_y-y)*(_y-y)) < 44+7.4;  
   }
   
   public void drawField(){
