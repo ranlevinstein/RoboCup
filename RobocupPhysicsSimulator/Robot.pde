@@ -15,6 +15,7 @@
     _r = r;
     _x = x;
     _y = y;
+    
     _theta = theta%360;
     display();
   }
@@ -29,18 +30,19 @@
     rect(0, 0, 100, 30);
     rect(0, 0, 30, 100);*/
     _poly = new FPoly();
+    _poly.setPosition(_x, _y);
     _poly.setStrokeWeight(3);
     _poly.setFill(120, 30, 90);
     _poly.setDensity(10);
     _poly.setRestitution(0.5);
-    _poly.vertex(_x-18, _y-31);
-    _poly.vertex(_x+18, _y-31);
-    _poly.vertex(_x+36, _y);
-    _poly.vertex(_x+18, _y+31);
-    _poly.vertex(_x+11, _y+21);
-    _poly.vertex(_x-11, _y+21);
-    _poly.vertex(_x-18, _y+31);
-    _poly.vertex(_x-36, _y); 
+    _poly.vertex(-18, -31);
+    _poly.vertex(18, -31);
+    _poly.vertex(36, 0);
+    _poly.vertex(18, 31);
+    _poly.vertex(11, 21);
+    _poly.vertex(-11, 21);
+    _poly.vertex(-18, 31);
+    _poly.vertex(-36, 0); 
     if (_poly!=null) _world.add(_poly);
     background(255);
       
@@ -72,7 +74,8 @@
      }
      _x = _poly.getX();
      _y = _poly.getY();
-     println(_x);
+     _theta = degrees(_poly.getRotation());
+     println(_theta);
      //_theta = _poly.getRotation();
   }
   
