@@ -16,13 +16,13 @@ FPoly poly;
     world.setEdgesRestitution(0.5);
     mouseX = 500;
     mouseY = 500;
-    robot = new Robot(0, 0, 0, 30, 3, world, this);
+    robot = new Robot(250, 250, 0, 30, 2, world, this);
+    
   }
   
   
   void draw(){
      moveTo(mouseX, mouseY, i++, 30, 0.01);
-     
   }
   
 
@@ -46,4 +46,3 @@ FPoly poly;
      float d4 = b-(theta-robot._theta)*speedOfRotation;
      robot.move(d1, d2, d3, d4); 
   }
-
