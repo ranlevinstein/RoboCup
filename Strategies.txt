@@ -1,0 +1,46 @@
+//this file collects different algorithms for the robot to score.
+
+
+//regular play 18/10/14
+//goes behind the ball in the line from the ball to the goal and then collects the ball and scores
+
+  void play(Robot robot, float speed, float ballX, float ballY){
+     float m = (robot._goalY-ballY)/(robot._goalX-ballX);
+     float angle = degrees(atan(m));
+     float b = ballY-ballX*m;
+     float l = 70;
+     float redyX = ballX-l;
+     float redyY = (ballX-l)*m+b;
+     float allowedError = 20;
+     if(robot._goalX < robot._x){
+       redyX = ballX+l;
+       redyY = (ballX+l)*m+b;
+     }
+     if(robot._goalX-robot._x < 0){
+       angle+=180;
+     }
+     if(redyX > robot._x-allowedError && redyX < robot._x+allowedError && redyY > robot._y-allowedError && redyY < robot._y+allowedError)
+       recentlyRedy = true;
+     if(robot.holdsBall(ball.getX(), ball.getY())){
+       moveTo(robot._goalX, robot._goalY, angle, speed, 2, robot);
+       recentlyRedy = false;
+       //println("goal");
+     }else if(!recentlyRedy){
+       moveToAvoid(redyX, redyY, angle, speed, 2, robot, ballX, ballY);
+       //println("avoid to perfect");
+   }else{
+       moveTo(ballX, ballY, angle, speed, 2, robot);
+       //println("go to ball");
+     } 
+    //println(robot.holdsBall(ballX, ballY));
+  }
+  
+  
+  //future play 18/10/14
+  //same as regular play but insted of doing everything with the current version of the ball we replace it with his future version.
+  play(robot1, 40, ball.getX()+ball.getVelocityX(), ball.getY()+ball.getVelocityY());
+  //the same function as regular play, just changing the location of the ball.
+  //won regular play with ratio of 412 - 176
+  
+  
+  
