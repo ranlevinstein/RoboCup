@@ -59,14 +59,19 @@ Box2DProcessing box2d;
    for(int i = 0; i < 10; i++){
      //robot.move(20, 20, 0, 0);
     play(robot, 1, ball.getX(), ball.getY());
-    //moveTo(ball.x, ball.y, 45, 7, 2, robot);
+    float m = -(robot._y-ball.getY())/(robot._x-ball.getX());
+    float angle = degrees(atan(m));
+    if(robot._x-ball.getX() < 0){
+     angle +=180; 
+    }
+    //println(m);
+    //moveTo(ball.getX(), ball.getY(), angle, 2, 0.5, robot);
     box2d.step();
    }
    drawField();
     for (Boundary wall: boundaries) {
     wall.display();
   }
-  
   robot.display();
   ball.display();
     
@@ -75,13 +80,13 @@ Box2DProcessing box2d;
   
   void play(Robot robot, float speed, float ballX, float ballY){
      float m = (robot._goalY-ballY)/(robot._goalX-ballX);
-     float angle = degrees(atan(m))-45;
+     float angle = degrees(atan(-m));
      float b = ballY-ballX*m;
      float l = 80;
      float redyX = ballX-l;
      float redyY = (ballX-l)*m+b;
-     float allowedErrorX = 40;
-     float allowedErrorY = 40;
+     float allowedErrorX = 10;
+     float allowedErrorY = 10;
      
      if(robot._goalX < robot._x){
        redyX = ballX+l;
@@ -102,7 +107,7 @@ Box2DProcessing box2d;
        println("avoid to perfect");
    }else{
        moveTo(ballX, ballY, angle, speed, 2, robot);
-       recentlyRedy = false;
+       //recentlyRedy = false;
        println("go to ball");
      } 
     //println(robot.holdsBall(ballX, ballY));
