@@ -43,7 +43,7 @@ Box2DProcessing box2d;
     robot1 = new Robot(244*2+250, 182*2, 0, 90, 2, 105.2, 364);
     createBlueGoal(105.2, 364);
     createYellowGoal(870.8, 364);
-    createBall(random(240, 240*3), random(180, 180*3));
+    createBall(random(100, 240*3), random(180, 180*3));
     
     
 
@@ -56,7 +56,7 @@ Box2DProcessing box2d;
   //robot -> left
   void draw(){
     
-   for(int i = 0; i < 10; i++){
+   for(int i = 0; i < 5; i++){
      //robot.move(20, 20, 0, 0);
     play(robot, 1, ball.getX(), ball.getY());
     float m = -(robot._y-ball.getY())/(robot._x-ball.getX());
@@ -188,12 +188,12 @@ Box2DProcessing box2d;
   float findMWithoutContact(float x0, float y0, float m, float x1, float y1, float r){ 
     float startM = m;
     for(int i = 0; i < 360/15 && willContact(x0, y0, m, x1, y1, r); i++){
-      m = tan((atan(m)+15%360));
+      m = tan((atan(-m)+15%360));
     }
     float upperM = m;
     m = startM;
     for(int i = 0; i < 360/15 && willContact(x0, y0, m, x1, y1, r); i++){
-      m = tan((atan(m)-15%360));
+      m = tan((atan(-m)-15%360));
     }
     float lowerM = m;
     if(abs(startM-upperM) < abs(startM-lowerM)) return upperM;
