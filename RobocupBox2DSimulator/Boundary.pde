@@ -16,7 +16,7 @@ class Boundary {
   // But we also have to make a body for box2d to know about it
   Body b;
 
- Boundary(float x_,float y_, float w_, float h_, float a, color c) {
+ Boundary(float x_,float y_, float w_, float h_, float a, color c, String name) {
     x = x_;
     y = y_;
     w = w_;
@@ -37,7 +37,7 @@ class Boundary {
     bd.angle = a;
     bd.position.set(box2d.coordPixelsToWorld(x,y));
     b = box2d.createBody(bd);
-    
+    b.setUserData(name);
     // Attached the shape to the body using a Fixture
     b.createFixture(sd,1);
   }

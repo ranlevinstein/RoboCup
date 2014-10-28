@@ -56,16 +56,13 @@
     rect.set(rectVertices, rectVertices.length);
     body.createFixture(rect,1.0);
     // Give it some initial random velocity
-   
+    body.setUserData("Robot");
   }
     
-    /*public void setPosition(float x, float y){
-       bd.position.set(box2d.coordPixelsToWorld(center));
+    public void setPosition(float x, float y, float angle){
+       body.setTransform(box2d.coordPixelsToWorld(x,y), radians(angle));
     }
     
-    public void setVelocity(float dx, float dy){
-      _poly.setVelocity(dx, dy);
-    }*/
     
     
     
@@ -81,8 +78,8 @@
       //display();
       body.setLinearVelocity(new Vec2(dx, dy));
       body.setAngularVelocity(dTheta);
-      _x = ((body.getPosition().x+24)*width)/(24*2);
-      _y = height-(((body.getPosition().y+18.2)*height)/(18.2*2));
+      _x = box2d.getBodyPixelCoord(body).x;
+      _y = box2d.getBodyPixelCoord(body).y;;
       _theta = degrees(body.getAngle());
        //println(_theta);
        //_theta = _poly.getRotation();

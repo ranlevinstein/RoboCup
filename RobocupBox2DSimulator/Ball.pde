@@ -1,62 +1,76 @@
 
 
 
-class Ball{
-  
-  float x;
-  float y;
-  float r;
-  color c;
-  Body body;
-  
-  Ball(float _x, float _y, float _r, color _c){
-    x = _x;
-    y = _y;
-    r = _r;
-    c = _c;
-    
-    BodyDef bd = new BodyDef();
-    bd.type = BodyType.DYNAMIC;
-    bd.position.set(box2d.coordPixelsToWorld(new Vec2(x, y)));
-    body = box2d.createBody(bd);
+class Ball {
 
-    CircleShape circle = new CircleShape();
-    circle.m_radius = box2d.scalarPixelsToWorld(7.4*2);
-    Vec2 offset = new Vec2(0,0);
-    offset = box2d.vectorPixelsToWorld(offset);
-    circle.m_p.set(offset.x,offset.y);
-    FixtureDef fd = new FixtureDef();
-      fd.shape = circle;
-    fd.density = 40f;
-    fd.friction = 0.8f;        
-      fd.restitution = 0.8f;
+  // We need to keep track of a Body and a radius
+  public Body body;
 
-    body.createFixture(fd);
+  color col;
+
+
+  Ball(float x, float y) {
+    // This function puts the particle in the Box2d world
+    makeBody(x, y);
+    body.setUserData(this);
+    col = color(175);
   }
-  
-  
-  
-  void display() {
-    Vec2 pos = box2d.getBodyPixelCoord(body);
-    // Get its angle of rotation
 
-    rectMode(CENTER);
+  // This function removes the particle from the box2d world
+  void killBody() {
+    box2d.destroyBody(body);
+  }
+
+  void setPosition(float x, float y){
+    body.setTransform(box2d.coordPixelsToWorld(x,y), 1);
+  }
+
+  // 
+  void display() {
+    // We look at each body and get its screen position
+    Vec2 pos = box2d.getBodyPixelCoord(body);
     pushMatrix();
     translate(pos.x, pos.y);
-    fill(175);
+    fill(col);
     stroke(0);
-    ellipse(0, 0, 7.4*4, 7.4*4);
+    strokeWeight(1);
+    ellipse(0, 0, 7.4*2*2, 7.4*2*2);
     popMatrix();
+  }
+
+  // Here's our function that adds the particle to the Box2D world
+  void makeBody(float x, float y) {
+    // Define a body
+    BodyDef bd = new BodyDef();
+    // Set its position
+    bd.position = box2d.coordPixelsToWorld(x, y);
+    bd.type = BodyType.DYNAMIC;
+    body = box2d.createBody(bd);
+
+    // Make the body's shape a circle
+    CircleShape cs = new CircleShape();
+    cs.m_radius = box2d.scalarPixelsToWorld(7.4*2);
+
+    FixtureDef fd = new FixtureDef();
+    fd.shape = cs;
+    // Parameters that affect physics
+    fd.density = 40;
+    fd.friction = 0.01;
+    fd.restitution = 0.3;
+
+    // Attach fixture to body
+    body.createFixture(fd);
+    
   }
   
   float getX(){
-    return box2d.getBodyPixelCoord(body).x;
+    Vec2 pos = box2d.getBodyPixelCoord(body);
+    return pos.x;
   }
   
   float getY(){
-    return box2d.getBodyPixelCoord(body).y;
+    Vec2 pos = box2d.getBodyPixelCoord(body);
+    return pos.y;
   }
-  
-  
-  
 }
+

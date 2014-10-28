@@ -2,6 +2,7 @@ import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.contacts.*;
 
 Box2DProcessing box2d;
 
@@ -14,6 +15,7 @@ Box2DProcessing box2d;
   int stepsFromLastGoal = 0;
   int ties;
   boolean recentlyRedy;
+  boolean needToInit = false;
   Ball ball;
   void setup(){
     smooth();
@@ -21,13 +23,14 @@ Box2DProcessing box2d;
   // Initialize box2d physics and create the world
   box2d = new Box2DProcessing(this,20);
   box2d.createWorld();
+  box2d.listenForCollisions();
   box2d.setGravity(0, 0);
   boundaries = new ArrayList<Boundary>();
   color boundariesColor = color(0, 0, 0);
-  boundaries.add(new Boundary(width,height/2,5,height,0,boundariesColor));
-  boundaries.add(new Boundary(0,height/2,5,height,0,boundariesColor));
-  boundaries.add(new Boundary(0, 0,width*2,5,0,boundariesColor));
-  boundaries.add(new Boundary(0, height-0,width*2,5,0,boundariesColor));
+  boundaries.add(new Boundary(width,height/2,5,height,0,boundariesColor, "Boundary"));
+  boundaries.add(new Boundary(0,height/2,5,height,0,boundariesColor, "Boundary"));
+  boundaries.add(new Boundary(0, 0,width*2,5,0,boundariesColor, "Boundary"));
+  boundaries.add(new Boundary(0, height-0,width*2,5,0,boundariesColor, "Boundary"));
   
     ties = 0;
     stepsFromLastGoal = 0;
@@ -43,10 +46,10 @@ Box2DProcessing box2d;
     robot1 = new Robot(244*2+250, 182*2, 0, 90, 2, 105.2, 364);
     createBlueGoal(105.2, 364);
     createYellowGoal(870.8, 364);
-    createBall(random(100, 240*3), random(180, 180*3));
+    createBall(random(width-(240*3), 240*3), random(height-(200*3), 200*3));
     
     
-
+    
 
     
     
@@ -56,25 +59,34 @@ Box2DProcessing box2d;
   //robot -> left
   void draw(){
     
-   for(int i = 0; i < 5; i++){
-     //robot.move(20, 20, 0, 0);
-    play(robot, 1, ball.getX(), ball.getY());
-    float m = -(robot._y-ball.getY())/(robot._x-ball.getX());
-    float angle = degrees(atan(m));
-    if(robot._x-ball.getX() < 0){
-     angle +=180; 
+   for(int i = 0; i < 100; i++){
+     if(steps > 1250){
+      steps = 0;
+      ties++;
+      needToInit = true;
+     }
+     if(needToInit){
+      needToInit = false;
+      ball.setPosition(random(width-(240*3), 240*3), random(height-(200*3), 200*3));
+      ball.body.setLinearVelocity(new Vec2(0, 0));
+      robot.setPosition(244*2-250, 182*2, 90);
+      robot1.setPosition(244*2+250, 182*2, 0);
+      steps = 0;
+      println("blue: " + goalsBlue + " yellow: " + goalsYellow + " ties: " + ties + " games: " + (goalsBlue+goalsYellow+ties));
     }
-    //println(m);
-    //moveTo(ball.getX(), ball.getY(), angle, 2, 0.5, robot);
+    play(robot, 3, ball.getX(), ball.getY());
+    play(robot1, 3, ball.getX(), ball.getY());
+    //println(ball.body.getLinearVelocity().x);
     box2d.step();
+    steps++;
    }
    drawField();
     for (Boundary wall: boundaries) {
     wall.display();
   }
   robot.display();
+  robot1.display();
   ball.display();
-    
   }
   
   
@@ -82,11 +94,11 @@ Box2DProcessing box2d;
      float m = (robot._goalY-ballY)/(robot._goalX-ballX);
      float angle = degrees(atan(-m));
      float b = ballY-ballX*m;
-     float l = 80;
+     float l = 100;
      float redyX = ballX-l;
      float redyY = (ballX-l)*m+b;
-     float allowedErrorX = 10;
-     float allowedErrorY = 10;
+     float allowedErrorX = 25;
+     float allowedErrorY = 25;
      
      if(robot._goalX < robot._x){
        redyX = ballX+l;
@@ -101,14 +113,14 @@ Box2DProcessing box2d;
      if(robot.holdsBall(ball.getX(), ball.getY())){
        moveTo(robot._goalX, robot._goalY, angle, speed, 2, robot);
        recentlyRedy = false;
-       println("goal");
+       //println("goal");
      }else if(!recentlyRedy){
        moveToAvoid(redyX, redyY, angle, speed, 2, robot, ballX, ballY);
-       println("avoid to perfect");
+       //println("avoid to perfect");
    }else{
        moveTo(ballX, ballY, angle, speed, 2, robot);
        //recentlyRedy = false;
-       println("go to ball");
+       //println("go to ball");
      } 
     //println(robot.holdsBall(ballX, ballY));
   }
@@ -119,16 +131,16 @@ Box2DProcessing box2d;
   
   
   void createBlueGoal(float x, float y){
-    boundaries.add(new Boundary(x, y,29.6,240, 0,color(55, 94, 199)));
+    boundaries.add(new Boundary(x, y,29.6,240, 0,color(55, 94, 199), "Blue Goal"));
   }
   
 
   void createYellowGoal(float x, float y){
-    boundaries.add(new Boundary(x, y,29.6,240, 0,color(234, 255, 36)));
+    boundaries.add(new Boundary(x, y,29.6,240, 0,color(234, 255, 36), "Yellow Goal"));
   }
   
   void createBall(float x, float y){
-    ball = new Ball(x, y, 7.4*4, color(120, 120, 190));
+    ball = new Ball(x, y);
   }
 
   
@@ -138,7 +150,7 @@ Box2DProcessing box2d;
      float m = (y-robot._y)/(x-robot._x);
      float angle = degrees(atan(m))+45-robot._theta;
      if(x-robot._x < 0){
-       //angle+=180;
+       angle+=180;
      }
      angle = angle%360;
      //println(angle);
@@ -163,7 +175,7 @@ Box2DProcessing box2d;
        angle+=180;
      }
      angle = angle%360;
-     //println(robot._theta);
+     //println(angle);
      float a = cos(radians(angle)) * speed;
      float b = sin(radians(angle)) * speed;
      float d1 = a+(theta-robot._theta)*speedOfRotation;
@@ -187,17 +199,13 @@ Box2DProcessing box2d;
   
   float findMWithoutContact(float x0, float y0, float m, float x1, float y1, float r){ 
     float startM = m;
-    for(int i = 0; i < 360/15 && willContact(x0, y0, m, x1, y1, r); i++){
-      m = tan((atan(-m)+15%360));
+    int i;
+    for(i = 0; i <= 360/15 && willContact(x0, y0, m, x1, y1, r); i++){
+      m = tan((atan(m)+15)%360);
+      
     }
-    float upperM = m;
-    m = startM;
-    for(int i = 0; i < 360/15 && willContact(x0, y0, m, x1, y1, r); i++){
-      m = tan((atan(-m)-15%360));
-    }
-    float lowerM = m;
-    if(abs(startM-upperM) < abs(startM-lowerM)) return upperM;
-    else return lowerM;
+    //println(degrees(atan(startM)) +"    " + degrees(atan(m)));
+     return m;
   }
   
   
@@ -230,5 +238,33 @@ Box2DProcessing box2d;
     
   }
   
+  // Collision event functions!
+void beginContact(Contact cp) {
+  // Get both fixtures
+  Fixture f1 = cp.getFixtureA();
+  Fixture f2 = cp.getFixtureB();
+  // Get both bodies
+  Body b1 = f1.getBody();
+  Body b2 = f2.getBody();
+
+  // Get our objects that reference these bodies
+  Object o1 = b1.getUserData();
+  Object o2 = b2.getUserData();
+  
+  if((o1 == "Blue Goal" && o2.getClass() == Ball.class) || (o2 == "Blue Goal" && o1.getClass() == Ball.class)){
+    needToInit = true;
+    goalsBlue++;
+  }else if((o1 == "Yellow Goal" && o2.getClass() == Ball.class) || (o2 == "Yellow Goal" && o1.getClass() == Ball.class)){
+    needToInit = true;
+    goalsYellow++;
+    //ball.setPosition(random(100, 500), random(100, 500));
+  }
+}
+
+
+// Objects stop touching each other
+void endContact(Contact cp) {
+}
+
   
   
